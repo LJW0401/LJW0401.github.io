@@ -159,6 +159,34 @@
   .hud.hidden { opacity: 0; }
   .hud b { color: #e8ecff; font-weight: 600; letter-spacing: 0.28em; }
 
+  /* 内容舱：星系中的行星点击后打开，保持参考站点的深空玻璃质感 */
+  .content-panel {
+    position: fixed; z-index: 8; top: 22px; right: 22px; bottom: 22px;
+    width: min(520px, calc(100vw - 44px)); box-sizing: border-box;
+    padding: 30px 30px 26px; overflow: auto;
+    color: #e8ecff; background: rgba(8, 10, 21, 0.86);
+    border: 1px solid rgba(255,255,255,.14); border-radius: 24px;
+    backdrop-filter: blur(24px) saturate(130%); -webkit-backdrop-filter: blur(24px) saturate(130%);
+    box-shadow: -24px 24px 80px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.06);
+    transform: translateX(calc(100% + 40px)); opacity: 0; pointer-events: none;
+    transition: transform .45s cubic-bezier(.22,1,.36,1), opacity .35s ease;
+  }
+  .content-panel.show { transform: translateX(0); opacity: 1; pointer-events: auto; }
+  .content-panel .close { position: absolute; right: 18px; top: 16px; width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,.14); border-radius: 50%; color: #e8ecff;
+    background: rgba(255,255,255,.06); cursor: pointer; font-size: 20px; line-height: 1; }
+  .content-panel .eyebrow { margin: 0 42px 12px 0; color: #ffbd91; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; }
+  .content-panel h2 { margin: 0 40px 14px 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.08; font-weight: 300; letter-spacing: -.03em; }
+  .content-panel .lead { color: rgba(232,236,255,.74); font-size: 14px; line-height: 1.75; margin-bottom: 22px; }
+  .content-panel .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 26px; }
+  .content-panel .chip { padding: 5px 10px; border-radius: 999px; color: #d7d3ff; background: rgba(138,123,255,.14); border: 1px solid rgba(138,123,255,.24); font-size: 11px; }
+  .content-panel .panel-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid rgba(255,255,255,.09); }
+  .content-panel .panel-section h3 { margin: 0 0 10px; font-size: 13px; font-weight: 500; letter-spacing: .12em; color: rgba(255,255,255,.55); text-transform: uppercase; }
+  .content-panel .panel-section p { margin: 0; color: rgba(232,236,255,.78); font-size: 14px; line-height: 1.8; white-space: pre-line; }
+  .content-panel .panel-link { display: inline-flex; margin-top: 22px; color: #ffd0a9; text-decoration: none; font-size: 13px; letter-spacing: .08em; }
+  .content-panel .panel-link:hover { color: #fff; }
+  @media (max-width: 640px) { .content-panel { top: 12px; right: 12px; bottom: 12px; width: calc(100vw - 24px); padding: 26px 22px; } }
+
   /* 黑场过渡 */
   .fader {
     position: fixed; inset: 0; z-index: 10; background: #05060d;
@@ -191,6 +219,11 @@
 </button>
 
 <div class="hud" id="hud"><b>GALAXY</b> · drag to orbit · scroll to zoom · click a section to enter</div>
+
+<aside class="content-panel" id="contentPanel" aria-live="polite">
+  <button class="close" id="panelClose" type="button" aria-label="关闭内容">×</button>
+  <div id="panelBody"></div>
+</aside>
 
 <div class="fader" id="fader"></div>
 
@@ -552,16 +585,45 @@ galaxyGroup.add(disc);
 
 // 板块定义 + 子项目（行星）
 const SECTIONS = [
-  { cn: '简介',   en: 'Intro',     hue: 0.62, items: ['坐标', '现状', '方向'] },
-  { cn: '关于我', en: 'About',     hue: 0.72, items: ['技能栈', '经历', '兴趣'] },
-  { cn: '开源',   en: 'Open',      hue: 0.13, items: ['Penguin Blog', 'Galaxy UI', 'Doc Engine', 'Lark Bot'] },
-  { cn: '文档',   en: 'Docs',      hue: 0.55, items: ['入门指南', 'API 参考', '部署手册', '更新日志'] },
-  { cn: '作品集', en: 'Portfolio', hue: 0.05, items: ['Penguin Blog', 'Galaxy UI', 'Doc Engine', 'Note Sync'] },
-  { cn: '联系',   en: 'Contact',   hue: 0.95, items: ['GitHub', 'Gitee', 'B站', '小红书', 'QQ'] },
+  { cn: '简介', en: 'Intro', hue: 0.62, items: [
+    { title: 'Penguin', kind: '个人站点', lead: '一座由代码、文档、作品与日常思考组成的个人星系。', body: '算法工程师。平时把时间分给工程实践、开源项目，以及把思考写下来。', tags: ['工程实践', '开源项目', '技术写作'] },
+    { title: '现在做什么', kind: '当前方向', lead: '不追热点，专注于能留下来的东西。', body: '打磨个人开源项目，研究工程化、性能与可观测性，偶尔写一些偏思考的技术文章。', tags: ['工程化', '性能', '可观测性'] },
+    { title: '一句话', kind: 'Personal note', lead: '不计划太多，反而能勇敢冒险。', body: '通常先做事，再想事；让真实的实践成为下一步思考的起点。', tags: ['先做事', '再想事'] },
+  ]},
+  { cn: '关于我', en: 'About', hue: 0.72, items: [
+    { title: '个人画像', kind: 'About Penguin', lead: '喜欢热闹的集体活动，也喜欢独自捣鼓小玩具。', body: '陌生环境里比较腼腆，熟悉之后会变得开放外向。喜欢 DIY、City Walk、唱 K、游戏和与朋友旅居。', tags: ['DIY', '游戏', 'City Walk', '朋友'] },
+    { title: '做事方式', kind: 'Working style', lead: '整段时间做深事，碎片时间留给聊天和发呆。', body: '执行力很强，说了就会去做；思维跳跃、想法滞后出现，所以会同步记录，避免重要的东西被遗忘。', tags: ['执行力', '深度工作', '记录'] },
+    { title: '关于页面', kind: 'Profile', lead: '完整的个人介绍已随站点内容归档。', body: '这里展示的是公开信息摘要。更多个人背景、兴趣和联系入口可以在内容目录中查看。', tags: ['公开信息'], href: 'public-content/about.md' },
+  ]},
+  { cn: '开源', en: 'Open Source', hue: 0.13, items: [
+    { title: 'blog-server', kind: 'Open source project', lead: '从零搭建的个人博客服务端。', body: '为个人站点提供内容管理、文章展示、项目与作品集等能力，也是这份公开内容的来源项目。', tags: ['Go', '博客', '内容管理'], href: 'public-content/projects/blog-server.md' },
+    { title: 'agent-hive', kind: 'Open source project', lead: '面向多 Agent 协作的实验性项目。', body: '记录 Agent 协作、工程实践和自动化探索。', tags: ['Agent', '自动化'], href: 'public-content/projects/agent-hive.md' },
+    { title: 'lark-agent-bridge', kind: 'Open source project', lead: '连接飞书能力与 Agent 工作流的桥梁。', body: '围绕飞书平台能力与智能体协作进行的工程实践。', tags: ['Lark', 'Agent', '工程实践'], href: 'public-content/projects/lark-agent-bridge.md' },
+  ]},
+  { cn: '文档', en: 'Docs', hue: 0.55, items: [
+    { title: 'AI 协作与成长', kind: 'Featured document', lead: '如何与 AI 协作而不让技术力下降。', body: '从角色边界、任务流程、理解闭环和无 AI 训练等角度，整理一套可长期执行的协作方法。', tags: ['AI 协作', '技术成长'], href: 'public-content/docs/ai-collaboration-balance-technical-growth.md' },
+    { title: '进入陌生领域', kind: 'Learning method', lead: '让 AI 帮你快速进入一个陌生技术领域。', body: '从建立领域地图，到围绕真实任务补最小知识，再到独立复述与验证，形成可迁移的学习闭环。', tags: ['AI 学习', '知识体系'], href: 'public-content/docs/ai-assisted-entry-new-technical-domain.md' },
+    { title: '轮腿调参经验', kind: 'Engineering notes', lead: '从腿长、摆角到机体控制的调参路径。', body: '记录轮腿平衡机器人调参时的检查顺序、控制细节、保护策略与常见现象处理。', tags: ['轮腿', '嵌入式', '调参'], href: 'public-content/docs/wheel-leg-tune-summary.md' },
+    { title: 'Ubuntu / STM32', kind: 'Practical guide', lead: '系统安装与嵌入式开发环境搭建记录。', body: '包含 Ubuntu 24.04 安装，以及 Ubuntu 上搭建 STM32 开发环境的实践文档。', tags: ['Ubuntu', 'STM32', 'ARM'], href: 'public-content/docs/install-ubuntu-24-04-lts.md' },
+    { title: '写作与工具', kind: 'Thinking', lead: '为什么坚持写博客，以及对开发者工具的思考。', body: '把读过的东西真正变成自己的理解，也把工程实践留下可复用的痕迹。', tags: ['写作', '开发者工具'], href: 'public-content/docs/why-keep-writing.md' },
+  ]},
+  { cn: '作品集', en: 'Portfolio', hue: 0.05, items: [
+    { title: '个人博客', kind: 'Portfolio', lead: '把代码、文档和思考放在同一个可持续的空间。', body: '从博客服务端到银河式首页，这个站点本身也是一件持续迭代的作品。', tags: ['网站', '内容系统'], href: 'public-content/portfolio/blog-server.md', image: 'images/portfolio-rm-wheel-leg-balance-robot-cover.jpg' },
+    { title: '北极熊电控体系', kind: 'Embedded project', lead: '面向机器人项目的电控与嵌入式实践。', body: '围绕 RM 机器人项目，整理电控体系、嵌入式实现和工程协作经验。', tags: ['RM', '嵌入式', 'C/C++'], href: 'public-content/portfolio/standardrobotpp.md', image: 'images/portfolio-standardrobotpp-cover.png' },
+    { title: 'RM 轮腿平衡机器人', kind: 'Robotics project', lead: '让轮腿机器人保持平衡并完成运动控制。', body: '涉及底层驱动、状态估计、控制器调参与整机联调。', tags: ['RM', '轮腿', '机器人'], href: 'public-content/portfolio/rm-wheel-leg-balance-robot.md', image: 'images/portfolio-rm-wheel-leg-balance-robot-cover.jpg' },
+  ]},
+  { cn: '联系', en: 'Contact', hue: 0.95, items: [
+    { title: 'GitHub', kind: 'Open source', lead: '代码与项目的主要入口。', body: '公开项目、博客服务端和持续迭代中的工程实践都集中在 GitHub。', tags: ['GitHub'], href: 'https://github.com/LJW0401' },
+    { title: 'QQ 群', kind: 'Community', lead: '想聊天？欢迎通过 QQ 群找到我。', body: '联系方式沿用公开个人介绍中的入口；如果链接未配置，优先使用站点首页底部的联系区。', tags: ['QQ', '交流'] },
+    { title: '媒体平台', kind: 'Media', lead: 'B 站与其他媒体入口。', body: '喜欢分享 DIY 小作品、工程实践和生活里的奇奇怪怪。', tags: ['B站', '分享'] },
+  ]},
 ];
 
 const sectionLabels = [];
 const anchorMats = [];
+const contentPanel = document.getElementById('contentPanel');
+const panelBody = document.getElementById('panelBody');
+const panelClose = document.getElementById('panelClose');
 ring.material.uniforms.uSectionCount.value = SECTIONS.length;
 SECTIONS.forEach((s, i) => {
   const angle = (i / SECTIONS.length) * Math.PI * 2 - Math.PI / 2;
@@ -769,7 +831,10 @@ function buildSystem(section) {
     const pEl = document.createElement('a');
     pEl.className = 'planet';
     pEl.href = 'javascript:void(0)';
-    pEl.textContent = item;
+    const itemData = (typeof item === 'object') ? item : { title: item, kind: section.en, lead: '公开内容', body: '' };
+    pEl.textContent = itemData.title;
+    pEl.setAttribute('aria-label', `打开 ${itemData.title}`);
+    pEl.addEventListener('click', (e) => { e.preventDefault(); openContent(itemData, section); });
     const pLabel = new CSS2DObject(pEl);
     pLabel.position.set(0, 0.18, 0);
     pLabel.center.set(0.5, 0.5);
@@ -781,6 +846,20 @@ function buildSystem(section) {
 
   activeSystem = { star, halo, nameObj, planets, materials: [starMat, haloMat] };
 }
+
+function openContent(item, section) {
+  const tags = (item.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
+  const link = item.href ? `<a class="panel-link" href="${item.href}" ${item.href.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>打开归档原文&nbsp; ↗</a>` : '';
+  panelBody.innerHTML = `<p class="eyebrow">${section.en} / ${item.kind || 'Public note'}</p>
+    <h2>${item.title}</h2><p class="lead">${item.lead || ''}</p>
+    <div class="chips">${tags}</div>
+    <div class="panel-section"><h3>内容摘要</h3><p>${item.body || '这是一条公开内容记录。'}</p></div>${link}`;
+  contentPanel.classList.add('show');
+}
+
+function closeContent() { contentPanel.classList.remove('show'); }
+panelClose.addEventListener('click', closeContent);
+contentPanel.addEventListener('click', (e) => { if (e.target === contentPanel) closeContent(); });
 
 function disposeSystem() {
   if (!activeSystem) return;
