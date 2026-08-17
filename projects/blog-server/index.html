@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Server — Penguin</title>
+  <meta name="description" content="个人博客服务端" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Blog Server" />
+<meta property="og:description" content="个人博客服务端" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Blog Server" />
+<meta name="twitter:description" content="个人博客服务端" />
+
+
+</head>
+<body class="page-project-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="doc-detail">
+
+
+  <header class="doc-header">
+    <div class="kicker">后端服务/blog · LJW0401/blog-server</div>
+    <h1>Blog Server</h1>
+    <div class="meta">
+
+      <span>★ 0 · ⑂ 0</span>
+      <span class="dot-sep">·</span>
+      <span>Go</span>
+      <span class="dot-sep">·</span>
+      <span>同步于 2 分钟前</span>
+
+      <span class="tag-mini">Go</span>
+    </div>
+  </header>
+
+  <section class="doc-body">
+    <h1 id="blog-server">blog-server</h1>
+<blockquote>
+<p>Repo: <a href="https://github.com/LJW0401/blog-server">LJW0401/lark-agent-bridge</a></p>
+</blockquote>
+<p>一个极简取向的个人站点服务端。</p>
+
+  </section>
+
+
+  <section class="readme-excerpt">
+    <h2>README 摘要</h2>
+    <div class="readme-excerpt-box"><h1 id="blog-server">blog-server</h1>
+<p>一个极简取向的个人站点服务端。作品集型定位——把 <strong>个人主页 + 博客文章 + 项目展示</strong> 统一进一个审美一致、无第三方脚本的 SSR 站点。</p>
+<p>单一 Go 二进制（无 CGO），VPS 友好，部署就是 <code>scp</code> + <code>systemctl restart</code>。</p>
+<h2 id="heading">特性</h2>
+<ul>
+<li><strong>内容</strong>：Markdown + YAML frontmatter；<code>draft / published / archived</code> 三态；fsnotify 热加载；goldmark + chroma 代码高亮</li>
+<li><strong>项目页</strong>：本地 MD 长文 + GitHub API 数据（Star/Fork/语言/push 时间）渲染期合并；ETag 条件请求，每 30 分钟同步，429 退避</li>
+<li><strong>作品集</strong>：<code>/portfolio</code> 独立展示非代码成品（设计 / 可视化 / 写作合集…</li>
+</ul>
+</div>
+  </section>
+
+
+
+  <nav class="doc-nav">
+    <a class="next" href="https://github.com/LJW0401/blog-server" rel="noopener noreferrer" target="_blank">查看 GitHub 仓库</a>
+  </nav>
+
+</article>
+
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>

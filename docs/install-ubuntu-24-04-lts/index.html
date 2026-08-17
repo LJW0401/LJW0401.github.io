@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安装 Ubuntu 24.04 LTS — Penguin</title>
+  <meta name="description" content="本文介绍如何在 Windows 环境下使用 Rufus 制作 Ubuntu 24.04 LTS 启动 U 盘，并完成 BIOS 设置、磁盘分区、系统安装及安装后的基础配置。" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="安装 Ubuntu 24.04 LTS" />
+<meta property="og:description" content="本文介绍如何在 Windows 环境下使用 Rufus 制作 Ubuntu 24.04 LTS 启动 U 盘，并完成 BIOS 设置、磁盘分区、系统安装及安装后的基础配置。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="安装 Ubuntu 24.04 LTS" />
+<meta name="twitter:description" content="本文介绍如何在 Windows 环境下使用 Rufus 制作 Ubuntu 24.04 LTS 启动 U 盘，并完成 BIOS 设置、磁盘分区、系统安装及安装后的基础配置。" />
+
+
+<meta property="og:site_name" content="Penguin" />
+<link rel="stylesheet" href="/static/math/katex.min.css" />
+
+</head>
+<body class="page-doc-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="doc-detail">
+
+
+
+  <header class="doc-header">
+    <div class="kicker">Linux</div>
+    <h1>安装 Ubuntu 24.04 LTS</h1>
+    <div class="meta">
+      <span>2026-07-10 更新</span>
+      <span class="dot-sep">·</span>
+      <span>2 分钟阅读</span>
+      <span class="tag-mini">Ubuntu</span><span class="tag-mini">系统</span>
+    </div>
+  </header>
+
+  <section class="doc-body">
+    <h1 id="1--windows--ubuntu-2404-">1. 在 Windows 下制作 Ubuntu 24.04 启动盘</h1>
+<h2 id="11-">1.1. 准备工作</h2>
+<ol>
+<li>在官网上下载对应的 <a href="https://releases.ubuntu.com/noble/">Ubuntu 镜像文件</a></li>
+<li>找一个闲置且空白的 U 盘或者硬盘（ 8G 及以上）</li>
+<li>在官网下载 <a href="https://rufus.ie/zh/">rufus</a></li>
+</ol>
+<h2 id="12--ubuntu-">1.2. 制作 Ubuntu 启动盘</h2>
+<p>打开 rufus，选择镜像文件和设备，之后点击写入即可完成安装盘制作</p>
+<p><img src="/images/8cdbb0964b8af056.png" alt="rufus" /></p>
+<blockquote>
+<p>此处目标机硬盘选择为GPT，大家可以在 PowerShell 中输入 Get-Disk 来查看硬盘类型</p>
+</blockquote>
+<h1 id="2-">2. 硬盘分区</h1>
+<p>在 Windows 系统，搜索栏输入“磁盘管理”并进入</p>
+<p>找到空闲的磁盘，点击压缩卷 <strong>(可以利用删除卷来获取更多空间！！！注意该磁盘内所有内容将清空)</strong></p>
+<p>删除后你将获得一些空闲空间来安装 Ubuntu 系统，这个时候那些空间会变为灰色</p>
+<p>建议为 Ubuntu 配置 200GB 的分区，避免后续因 Ubuntu 空间不足而重装系统</p>
+<p><img src="/images/523e28d55a044787.png" alt="rufus" /></p>
+<h1 id="3-gpt">3. GPT分区形式安装方式</h1>
+<h2 id="31-bios">3.1. 进入BIOS</h2>
+<ol>
+<li>
+<p>关机后开机（重启）</p>
+</li>
+<li>
+<p>插入 Ubuntu 安装盘（之前制作好啦）</p>
+</li>
+<li>
+<p>进入 BIOS</p>
+</li>
+<li>
+<p>寻找 <code>Security Boot</code> 选项，设置为 <strong><code>False</code></strong></p>
+</li>
+</ol>
+<blockquote>
+<p>非常重要！若保持默认为 True ，将导致<strong>无法安装 CUDA 和使用外接显示屏</strong></p>
+</blockquote>
+<ol start="5">
+<li>在 BIOS 启动启动盘中的系统</li>
+</ol>
+<h2 id="32-">3.2. 安装系统</h2>
+
+  </section>
+
+  <nav class="doc-nav">
+
+    <a class="next" href="/docs/ai-collaboration-balance-technical-growth">如何与 AI 协作而不让技术力下降 ›</a>
+  </nav>
+
+
+  <div class="read-count">阅读 15 次</div>
+
+</article>
+
+<script defer src="/static/math/katex.min.js"></script>
+<script defer src="/static/math/auto-render.min.js"></script>
+<script defer src="/static/math/math-init.js"></script>
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>

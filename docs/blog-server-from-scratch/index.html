@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>从零搭建一个博客服务端 — Penguin</title>
+  <meta name="description" content="这个站本身就是它要展示的作品。" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="从零搭建一个博客服务端" />
+<meta property="og:description" content="这个站本身就是它要展示的作品。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="从零搭建一个博客服务端" />
+<meta name="twitter:description" content="这个站本身就是它要展示的作品。" />
+
+
+<meta property="og:site_name" content="Penguin" />
+<link rel="stylesheet" href="/static/math/katex.min.css" />
+
+</head>
+<body class="page-doc-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="doc-detail">
+
+
+
+  <header class="doc-header">
+    <div class="kicker">工程笔记</div>
+    <h1>从零搭建一个博客服务端</h1>
+    <div class="meta">
+      <span>2026-04-19 更新</span>
+      <span class="dot-sep">·</span>
+      <span>2 分钟阅读</span>
+      <span class="tag-mini">网站</span><span class="tag-mini">作品集</span>
+    </div>
+  </header>
+
+  <section class="doc-body">
+    <h1 id="heading">开篇：为什么自己造轮子</h1>
+<p>市面上的博客托管服务能解决&quot;写 + 发&quot;这件事，但没法给你一个 <strong>审美统一的个人站点</strong>——主页、文章、项目展示都由不同工具拼起来，接缝处永远有违和感。</p>
+<p>这个项目的根本问题不是&quot;做博客&quot;，而是：<strong>把一个开发者能拿出手的所有东西装进同一个壳子</strong>。</p>
+<h2 id="heading-1">关键决定</h2>
+<ol>
+<li><strong>内容源</strong>：Markdown 文件 + YAML frontmatter，而不是数据库——保证内容可迁移</li>
+<li><strong>鉴权</strong>：服务端渲染的登录表单 + HttpOnly Cookie，而不是前端校验</li>
+<li><strong>项目数据</strong>：本地 MD 长文 + GitHub API 合并——把&quot;我为什么这么做&quot;的叙事和客观指标分开</li>
+<li><strong>部署形态</strong>：Caddy 反代 + systemd 守护；应用内部跑 30 分钟 GitHub 同步、每日冷备份</li>
+</ol>
+<h2 id="heading-2">技术栈</h2>
+<ul>
+<li>Go 1.22+，chi 路由，<code>html/template</code></li>
+<li>goldmark + chroma（Markdown + 代码高亮）</li>
+<li>modernc.org/sqlite（纯 Go，无 CGO）</li>
+<li>总共一个二进制 + 一个数据目录</li>
+</ul>
+<p>没有 Node，没有 React，没有 npm。</p>
+<h2 id="heading-3">回头看</h2>
+<p>从需求文档开始整套流程走了 7 个阶段、118 个工作项。最大的意外不是哪个功能难写，而是 <strong>&ldquo;先搭原型再写代码&quot;这件事真的有价值</strong>——P2 渲染管道接手原型时，我只需要把三份 HTML 拆进 <code>html/template</code>，视觉基本没变。</p>
+
+  </section>
+
+  <nav class="doc-nav">
+    <a class="prev" href="/docs/why-keep-writing">‹ 为什么我还在坚持写博客</a>
+    <a class="next" href="/docs/developer-tools">我对开发者工具的思考 ›</a>
+  </nav>
+
+
+  <div class="read-count">阅读 38 次</div>
+
+</article>
+
+<script defer src="/static/math/katex.min.js"></script>
+<script defer src="/static/math/auto-render.min.js"></script>
+<script defer src="/static/math/math-init.js"></script>
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>

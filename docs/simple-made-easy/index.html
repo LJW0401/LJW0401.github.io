@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Made Easy — Penguin</title>
+  <meta name="description" content="我们通常只关注到了眼前的easy，常常忽略了更为长久的simple。" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Simple Made Easy" />
+<meta property="og:description" content="我们通常只关注到了眼前的easy，常常忽略了更为长久的simple。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Simple Made Easy" />
+<meta name="twitter:description" content="我们通常只关注到了眼前的easy，常常忽略了更为长久的simple。" />
+
+
+<meta property="og:site_name" content="Penguin" />
+<link rel="stylesheet" href="/static/math/katex.min.css" />
+
+</head>
+<body class="page-doc-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="doc-detail">
+
+
+
+  <header class="doc-header">
+    <div class="kicker">读后感</div>
+    <h1>Simple Made Easy</h1>
+    <div class="meta">
+      <span>2026-04-25 更新</span>
+      <span class="dot-sep">·</span>
+      <span>4 分钟阅读</span>
+      <span class="tag-mini">开发</span><span class="tag-mini">思考</span><span class="tag-mini">总结</span>
+    </div>
+  </header>
+
+  <section class="doc-body">
+    <h1 id="heading">背景</h1>
+<p>今天读了一篇文章：<a href="https://mp.weixin.qq.com/s?__biz=MzE5ODE0MTU2OA%3D%3D&amp;mid=2247483830&amp;idx=1&amp;sn=01adef02b36f08347668c2c53110d6c1&amp;poc_token=HOkw7mmjhJynBdGG8NvBCd9KXoM4k41fIavtJt3P">Vibe coding 为什么容易陷入代码腐烂</a>，感觉内容直插核心，一下子说中了我在开发中感觉奇怪的地方：<strong>AI写的代码非常漂亮，结构整齐，bug很少</strong>。但在进行了多轮迭代之后，总有一种说不出来的屎山感。</p>
+<p>这篇文章从easy和simple不同的含义上切入，说出了看似同义，实则有不同含义的两个单词之间的区别。</p>
+<h1 id="simple-made-easy">Simple Made Easy</h1>
+<p>2011 年 Rich Hickey 在 Strange Loop 大会做了一个演讲，叫 Simple Made Easy。他是 Clojure 的作者。这个演讲里他区分了两个英文词：simple 和 easy。</p>
+<p>Simple 的词源是&quot;一折&quot;，指没有缠绕——一个概念就是一个概念，不和别的东西交织。它的反义词是 complex，&ldquo;编织在一起&rdquo;。</p>
+<p>Easy 的词源是&quot;躺在旁边&quot;，指手边的、熟悉的、当下顺的东西。反义词是 hard，需要用力。</p>
+<p>Hickey 的核心观点是：这两个词在日常英语里被当作同义词，但它们描述的是两件不同的事。Simple 描述的是对象本身的结构——它里面有没有不必要的缠绕。Easy 描述的是对象和使用者之间的关系——使用者熟不熟悉它。</p>
+<p>从这个区分出发有一个推论：simple 是客观的，easy 是相对的。一段代码里有没有被不必要地缠在一起的概念，这件事不依赖谁在看。但 easy 依赖谁在看——同一段 Haskell 对老手 easy，对新手 hard。</p>
+<p>Hickey 认为软件行业有一个长期的毛病，就是把 easy 当成了 simple。选型时问&quot;好上手吗&quot;、code review 时说&quot;读起来挺顺&quot;，这些标准都在 easy 这一侧。很少有人在问：这段代码里有没有被不必要地缠在一起的东西。</p>
+<p>这个区分为什么重要？因为 easy 只在写代码那一刻给收益——&ldquo;顺手&rdquo;、&ldquo;熟悉&quot;都是那一刻的感受。但代码交付之后还要被改、被接手、被长期维护。simple 的收益体现在这些后续阶段，而 easy 不提供这些后续收益。</p>
+<p>Hickey 在演讲末尾留了一个词：complect，意思是&quot;把本来可以分开的东西缠到一起&rdquo;。他认为工程师最重要的能力是能识别代码里这种不必要的缠绕。</p>
+<h1 id="ai--complect">AI 时代下工程师更应该注重 complect</h1>
+<p>在 AI coding 下，工程师和 AI 之间应该有一个明确的分工。</p>
+<ul>
+<li><strong>AI 负责产出</strong>。我们没有理由放弃放弃它的速度优势。</li>
+<li><strong>人负责识别缠绕</strong>。</li>
+</ul>
+<p>这种分工对工程师的要求和过去不一样。过去工程师的核心价值在&quot;能不能写出这段代码&quot;。在 AI 能快速写出大部分代码的前提下，核心价值转到了&quot;能不能识别这段代码里有没有不必要的缠绕&quot;。</p>
+<p>识别缠绕是一种判断力，而不是一种技能。技能可以通过看教程和练习快速获得，判断力只能通过长期维护项目、经历自己的设计错误、承担设计错误的后果来养成。</p>
+<p>所以下一阶段工程师之间真正的差距，不会出现在产出速度上。差距会出现在判断力上。能在 AI 产出的代码里识别出哪些缠绕是必要的、哪些是不必要的，能在接受之前做出取舍，这种能力现在看起来很隐性，但它的稀缺性会越来越明显。</p>
+<p>能力层面有一个次生问题：识别 simple 和 easy 的差别是一种需要长期维护经验才能养出来的能力，而 AI 让新手可以绕过这种经验直接产出代码。结果是产出速度被 AI 抬起来，但判断力没有跟上。</p>
+<hr />
+<p>在 AI 的高速输出中把不必要的缠绕挡在外面。Hickey 十四年前讲过的事，在 AI coding 下变成了一个更紧迫的问题。</p>
+
+  </section>
+
+  <nav class="doc-nav">
+    <a class="prev" href="/docs/ai-collaboration-balance-technical-growth">‹ 如何与 AI 协作而不让技术力下降</a>
+    <a class="next" href="/docs/wheel-leg-tune-summary">轮腿调参经验总结 ›</a>
+  </nav>
+
+
+  <div class="read-count">阅读 33 次</div>
+
+</article>
+
+<script defer src="/static/math/katex.min.js"></script>
+<script defer src="/static/math/auto-render.min.js"></script>
+<script defer src="/static/math/math-init.js"></script>
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>

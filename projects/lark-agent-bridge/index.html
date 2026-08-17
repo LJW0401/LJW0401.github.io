@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lark Agent Bridge — Penguin</title>
+  <meta name="description" content="把 LLM agent 接入飞书（Lark）生态的桥接层——让 agent 能在群聊、文档、表格里直接协作。" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Lark Agent Bridge" />
+<meta property="og:description" content="把 LLM agent 接入飞书（Lark）生态的桥接层——让 agent 能在群聊、文档、表格里直接协作。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Lark Agent Bridge" />
+<meta name="twitter:description" content="把 LLM agent 接入飞书（Lark）生态的桥接层——让 agent 能在群聊、文档、表格里直接协作。" />
+
+
+</head>
+<body class="page-project-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="doc-detail">
+
+
+  <header class="doc-header">
+    <div class="kicker">开发者工具 · LJW0401/lark-agent-bridge</div>
+    <h1>Lark Agent Bridge</h1>
+    <div class="meta">
+
+      <span>★ 1 · ⑂ 0</span>
+      <span class="dot-sep">·</span>
+      <span>Go</span>
+      <span class="dot-sep">·</span>
+      <span>同步于 2 分钟前</span>
+
+      <span class="tag-mini">Go</span><span class="tag-mini">Lark</span><span class="tag-mini">AI</span><span class="tag-mini">Agent</span>
+    </div>
+  </header>
+
+  <section class="doc-body">
+    <h1 id="lark-agent-bridge">lark-agent-bridge</h1>
+<blockquote>
+<p>Repo: <a href="https://github.com/LJW0401/lark-agent-bridge">LJW0401/lark-agent-bridge</a></p>
+</blockquote>
+<p><strong>把 LLM Agent 接入飞书生态的桥接层</strong>。让 <a href="/projects/agent-hive">agent-hive</a> 里的 agent 能在飞书群聊、文档、多维表格里像人类成员一样协作。</p>
+<h2 id="heading">为什么做</h2>
+<p>AI agent 大部分的&quot;人机交互&quot;还停留在网页对话框，但真实工作场景是：</p>
+<ul>
+<li>群聊里被 @，在群里直接回答</li>
+<li>文档被评论，去文档里回评论</li>
+<li>表格里有新行，按规则处理新行</li>
+</ul>
+<p>用户不该为了用 agent 切换到另一个界面——<strong>agent 应该长在现有工作流里</strong>。</p>
+<h2 id="heading-1">架构</h2>
+<pre><code>飞书事件回调 ──▶ lark-agent-bridge ──▶ agent-hive (LLM 推理)
+                       │                    │
+                       ▼                    ▼
+               飞书 OpenAPI          Trace + Logs
+               （发消息/改文档/更新表格）
+</code></pre>
+<p>bridge 层只做两件事：</p>
+<ol>
+<li><strong>翻译</strong>：飞书事件 ↔ agent 理解的结构化任务</li>
+<li><strong>执行反馈</strong>：agent 的行动通过飞书 API 落地</li>
+</ol>
+<h2 id="heading-2">现状</h2>
+<ul>
+<li>群聊 @ 场景已打通，能回简单问答</li>
+<li>文档评论回复、表格自动化在开发中</li>
+</ul>
+
+  </section>
+
+
+  <section class="readme-excerpt">
+    <h2>README 摘要</h2>
+    <div class="readme-excerpt-box"><h1 id="lark-agent-bridge">lark-agent-bridge</h1>
+<p>通过飞书 CLI 触发 AI Agent 处理任务。</p>
+<h2 id="heading">简介</h2>
+<p>监听飞书机器人收到的消息，通过 <a href="https://github.com/larksuite/cli">lark-cli</a> 事件订阅接收，转发给 AI Agent（Codex CLI 或 Claude Code）处理，并将结果以流式卡片（打字机效果）回复到飞书。</p>
+<pre><code>用户向飞书机器人发送消息
+        │
+        ▼
+lark-cli 事件订阅（WebSocket）
+        │
+        ▼
+消息队列（同一会话串行，跨会话并行）
+        │
+        ▼
+创建任务状态 → 添加工作表情 → 发送单张流式卡片
+        │
+        ▼
+Codex CLI / Claude Code（无头模式）或 ChatGPT Web S…
+</code></pre>
+</div>
+  </section>
+
+
+
+  <nav class="doc-nav">
+    <a class="next" href="https://github.com/LJW0401/lark-agent-bridge" rel="noopener noreferrer" target="_blank">查看 GitHub 仓库</a>
+  </nav>
+
+</article>
+
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>

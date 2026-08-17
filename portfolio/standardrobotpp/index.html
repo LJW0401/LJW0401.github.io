@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>北极熊电控体系 — Penguin</title>
+  <meta name="description" content="RM通用机器人控制代码体系——易上手、能兼容、模块化" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+
+<meta property="og:site_name" content="Penguin" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="北极熊电控体系" />
+<meta property="og:description" content="RM通用机器人控制代码体系——易上手、能兼容、模块化" />
+<meta property="og:image" content="/images/portfolio-standardrobotpp-cover.png?v=1776879152" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="北极熊电控体系" />
+<meta name="twitter:description" content="RM通用机器人控制代码体系——易上手、能兼容、模块化" />
+<meta name="twitter:image" content="/images/portfolio-standardrobotpp-cover.png?v=1776879152" />
+
+
+</head>
+<body class="page-portfolio-detail">
+
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Penguin.</a>
+    <ul class="nav-links">
+      <li><a href="/">首页</a></li>
+      <li><a href="/projects">项目</a></li>
+      <li><a href="/docs">文档</a></li>
+      <li><a href="/portfolio">作品集</a></li>
+      <li><a href="/about">关于</a></li>
+      <li><a href="/#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+
+<article class="portfolio-detail">
+
+
+
+  <header class="portfolio-header">
+    <div class="kicker">RM</div>
+    <h1>北极熊电控体系</h1>
+    <p class="portfolio-desc">RM通用机器人控制代码体系——易上手、能兼容、模块化</p>
+    <div class="portfolio-meta">
+      <time datetime="2026-04-22">2026-04-22</time>
+
+      <span class="portfolio-tags">
+        <a href="/portfolio?tag=RM">#RM</a><a href="/portfolio?tag=%e5%b5%8c%e5%85%a5%e5%bc%8f">#嵌入式</a><a href="/portfolio?tag=C%2fC%2b%2b">#C/C&#43;&#43;</a>
+      </span>
+
+    </div>
+  </header>
+
+  <figure class="portfolio-cover">
+    <img src="/images/portfolio-standardrobotpp-cover.png?v=1776879152" alt="北极熊电控体系 封面" loading="lazy" />
+  </figure>
+
+
+
+  <div class="portfolio-body markdown-body">
+    <h2 id="heading">项目简介</h2>
+<p>北极熊电控体系开源项目面向 RoboMaster 机器人开发，围绕电控软件架构、ROS2 控制支持、上位机调试工具进行系统整理。通过Git版本管理、模块化设计、标准化控制流程与参数化配置，构建了一套可复用、易协作、便于调试和二次开发的电控开发体系，实现了电控、算法与调试的分层解耦。降低后续机器人功能开发门槛、团队交接成本，提升维护效率和参数调试效率。为团队长期迭代提供稳定基础。</p>
+<h2 id="heading-1">项目内容</h2>
+<p>项目主要由三部分组成：</p>
+<ul>
+<li><strong>StandardRobot++ 下位机电控框架</strong>：用于统一机器人底层任务划分、模块接口、通信结构和控制逻辑，支撑底盘、云台、发射、视觉通信等功能开发。</li>
+<li><strong>ROS2 控制支持包</strong>：用于连接上位机算法、仿真环境和下位机控制系统，支持机器人状态发布、控制指令下发和跨模块调试。</li>
+<li><strong>StandardRobot-Tool 上位机调试器</strong>：用于参数配置、曲线观察、状态监控和调试辅助，提高实车调试效率。</li>
+</ul>
+<h2 id="heading-2">我的工作</h2>
+<p>我主导搭建了 RM2025 北极熊电控体系开源项目的整体技术体系与核心框架，围绕下位机电控架构、ROS2 控制支持、上位机调试工具和轮腿控制调参方法，构建了一套可复用、可扩展、便于协作的机器人电控开发方案。项目中，我完成了底层控制框架的整体设计与模块划分，明确了任务调度、通信接口、控制链路和调试流程。该体系降低了团队开发和联调成本，也为后续成员快速上手、复现实车调试流程和开展功能扩展提供了稳定基础。</p>
+<h2 id="heading-3">技术要点</h2>
+<ul>
+<li><strong>控制算法</strong>：PID、LQR。</li>
+<li><strong>机器人状态建模</strong>：基于六变量状态向量的轮腿建模。</li>
+<li><strong>调参方法</strong>：采用分阶段调参策略，提供了信号发生器函数用来作为调试输入。</li>
+<li><strong>实车安全</strong>：强调物理量校验、输出限幅、异常断使能、遥控急停等保护逻辑。</li>
+<li><strong>工程沉淀</strong>：将实车调试经验转化为文档规范，减少重复踩坑，提高团队协作效率。</li>
+</ul>
+<h2 id="heading-4">项目成果</h2>
+<p>通过该项目，团队形成了一套较完整的 RoboMaster 电控开源体系，覆盖底层框架、ROS2 控制接口、上位机调试工具。相关文档不仅能帮助新成员快速理解电控系统结构，也能在实车调试中提供明确的排查路径和参数调整依据。</p>
+
+  </div>
+</article>
+
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <h4>保持联系</h4>
+    <table class="contact-table">
+      <thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><ul>
+
+              <li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li>
+
+
+              <li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li>
+
+
+          </ul></td>
+          <td><ul>
+
+              <li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li>
+
+
+              <li>抖音</li>
+
+              <li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li>
+
+
+          </ul></td>
+          <td><ul><li>QQ：772436864</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="copyright">© 2026 Penguin. Designed with care.</div>
+  </div>
+</footer>
+</body>
+</html>
