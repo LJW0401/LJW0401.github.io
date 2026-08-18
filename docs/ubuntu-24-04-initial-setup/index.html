@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全新 Ubuntu 24.04 配置指南：Zsh、Oh My Zsh 与万象拼音 — Penguin</title>
+  <meta name="description" content="面向全新 Ubuntu 24.04 GNOME 桌面的配置指南：完成系统更新、Zsh 与 Oh My Zsh 美化，以及 IBus Rime 和万象拼音部署。" />
+  <link rel="stylesheet" href="/static/css/theme.css" />
+  <meta property="og:site_name" content="Penguin" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="全新 Ubuntu 24.04 配置指南：Zsh、Oh My Zsh 与万象拼音" />
+  <meta property="og:description" content="面向全新 Ubuntu 24.04 GNOME 桌面的配置指南：完成系统更新、Zsh 与 Oh My Zsh 美化，以及 IBus Rime 和万象拼音部署。" />
+  <meta name="twitter:card" content="summary" />
+</head>
+<body class="page-doc-detail">
+<nav class="nav"><div class="nav-inner"><a class="nav-logo" href="/">Penguin.</a><ul class="nav-links"><li><a href="/">首页</a></li><li><a href="/projects">项目</a></li><li><a href="/docs">文档</a></li><li><a href="/portfolio">作品集</a></li><li><a href="/about">关于</a></li><li><a href="/#contact">联系</a></li></ul></div></nav>
+<main>
+  <article class="doc-detail">
+    <header class="doc-header">
+      <div class="kicker">Linux</div>
+      <h1>全新 Ubuntu 24.04 配置指南：Zsh、Oh My Zsh 与万象拼音</h1>
+      <div class="meta"><span>2026-08-18 更新</span><span class="dot-sep">·</span><span>8 分钟阅读</span><span class="tag-mini">Ubuntu</span><span class="tag-mini">Zsh</span><span class="tag-mini">Oh My Zsh</span><span class="tag-mini">Rime</span><span class="tag-mini">输入法</span></div>
+    </header>
+    <section class="doc-body">
+      <p>这篇文章面向刚安装好的 Ubuntu 24.04 LTS（GNOME 桌面）。按顺序完成后，你会得到一个带命令建议与语法高亮的 Zsh 终端，以及可用的 Rime 万象拼音输入法。</p>
+      <blockquote><p>本文沿用 Ubuntu 默认的 IBus 输入法框架，不需要为了安装 Rime 改用 Fcitx。涉及个人配置的步骤均先备份，避免覆盖已有词库或 Shell 设置。</p></blockquote>
+      <h1 id="prepare">1. 开始前准备</h1>
+      <p>打开终端，先更新系统并安装后续需要的工具：</p>
+      <pre><code>sudo apt update
+sudo apt upgrade -y
+sudo apt install -y curl git unzip</code></pre>
+      <h1 id="zsh">2. 配置 Zsh 与 Oh My Zsh</h1>
+      <h2>2.1. 安装并设为默认 Shell</h2>
+      <pre><code>sudo apt install -y zsh
+chsh -s "$(command -v zsh)"</code></pre>
+      <p><code>chsh</code> 修改的是下次登录时使用的 Shell，因此执行后请<strong>注销并重新登录</strong>桌面会话，或重启系统。重新打开终端后，使用 <code>echo "$SHELL"</code> 和 <code>zsh --version</code> 确认；前者应显示 Zsh 的路径，后者应输出版本。</p>
+      <blockquote><p>如果这是第一次启动 Zsh，它可能会询问是否创建配置文件；选择默认选项即可，Oh My Zsh 安装时会创建或接管 <code>~/.zshrc</code>。</p></blockquote>
+      <h2>2.2. 安装 Oh My Zsh</h2>
+      <p>Oh My Zsh 为 Zsh 提供主题、别名和插件管理。运行官方安装脚本：</p>
+      <pre><code>sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</code></pre>
+      <p>如需手动备份原有配置，可在安装前执行：</p>
+      <pre><code>cp -a ~/.zshrc ~/.zshrc.before-oh-my-zsh 2&gt;/dev/null || true</code></pre>
+      <h2>2.3. 安装常用插件</h2>
+      <p>下面两个插件分别提供历史命令建议和命令语法高亮：</p>
+      <pre><code>git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"</code></pre>
+      <p>编辑 <code>~/.zshrc</code>，将 <code>plugins=(git)</code> 替换为：</p>
+      <pre><code>plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)</code></pre>
+      <p><code>zsh-syntax-highlighting</code> 应放在插件列表最后。保存后执行 <code>source ~/.zshrc</code>；灰色文字会给出历史命令建议，按 <code>→</code> 或 <code>End</code> 可接受建议。</p>
+      <h2>2.4. 可选：ROS 2 命令行补全</h2>
+      <p>只有已安装 ROS 2 时，才在 <code>~/.zshrc</code> 末尾添加对应发行版的环境脚本。例如 Humble：</p>
+      <pre><code>alias sz='source ~/.zshrc'
+alias ss='source install/setup.zsh'
+source /opt/ros/humble/setup.zsh
+setopt no_nomatch
+eval "$(register-python-argcomplete3 ros2)"
+eval "$(register-python-argcomplete3 colcon)"</code></pre>
+      <p>如果你的 ROS 2 发行版不是 Humble，请把路径中的 <code>humble</code> 改成实际名称；没有安装 ROS 2 时不要加入这段配置。</p>
+      <h1 id="rime">3. 安装 Rime 与万象拼音</h1>
+      <h2>3.1. 安装 IBus Rime 和 Lua 支持</h2>
+      <p>万象拼音部分功能依赖 Lua。安装 IBus Rime、部署工具和 Lua 插件：</p>
+      <pre><code>sudo apt install -y ibus-rime librime-bin librime-plugin-lua
+dpkg-query -W ibus-rime librime-bin librime-plugin-lua</code></pre>
+      <p>第二条会列出软件包及版本；若命令报错，先解决安装问题再继续。</p>
+      <h2>3.2. 下载万象拼音文件</h2>
+      <p>万象拼音 Base 适合全拼用户，也可配置常见双拼。请在以下两个 Releases 页面下载最新版稳定文件：</p>
+      <ul><li><a href="https://github.com/amzxyz/rime-wanxiang/releases">万象拼音 Base</a>：下载 <code>rime-wanxiang-base.zip</code></li><li><a href="https://github.com/amzxyz/RIME-LMDG/releases">RIME-LMDG</a>：下载 <code>wanxiang-lts-zh-hans.gram</code></li></ul>
+      <p>第二个文件是语法模型，体积较大；缺少它会影响万象方案的语法模型能力。下载后，默认应位于 <code>~/Downloads</code>。使用终端下载时，请先在 Releases 页面确认当前版本号：</p>
+      <pre><code>cd ~/Downloads
+VERSION='v16.0.1' # 替换为当前 rime-wanxiang 的发布版本
+curl -fL --retry 3 -O "https://github.com/amzxyz/rime-wanxiang/releases/download/${VERSION}/rime-wanxiang-base.zip"
+curl -fL --retry 3 -O "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram"</code></pre>
+      <h2>3.3. 部署到 IBus Rime 用户目录</h2>
+      <p>Ubuntu 上 IBus Rime 的用户目录为 <code>~/.config/ibus/rime</code>。首次安装可直接执行：</p>
+      <pre><code>mkdir -p ~/.config/ibus/rime
+unzip -o ~/Downloads/rime-wanxiang-base.zip -d ~/.config/ibus/rime
+cp ~/Downloads/wanxiang-lts-zh-hans.gram ~/.config/ibus/rime/</code></pre>
+      <p>解压后，目录根部应包含 <code>wanxiang.schema.yaml</code>、<code>wanxiang.dict.yaml</code>、<code>lua/</code>、<code>dicts/</code> 和 <code>wanxiang-lts-zh-hans.gram</code>。</p>
+      <blockquote><p>已经使用 Rime 的用户请先备份：<code>cp -a ~/.config/ibus/rime ~/.config/ibus/rime.backup</code>。更新方案文件时，不要删除 <code>*.userdb</code>、个人词典或 <code>*.custom.yaml</code> 文件。</p></blockquote>
+      <h2>3.4. 启用万象方案并编译</h2>
+      <p>创建或编辑 <code>~/.config/ibus/rime/default.custom.yaml</code>，新文件写入以下内容：</p>
+      <pre><code>patch:
+  schema_list:
+    - schema: wanxiang</code></pre>
+      <p>若文件已有内容，请将 <code>wanxiang</code> 合并到现有的 <code>schema_list</code>，不要覆盖其他已启用方案。然后编译部署：</p>
+      <pre><code>rime_deployer --build ~/.config/ibus/rime /usr/share/rime-data ~/.config/ibus/rime/build</code></pre>
+      <p>成功后，<code>~/.config/ibus/rime/build/</code> 中会出现 <code>wanxiang.schema.yaml</code>、<code>wanxiang.table.bin</code>、<code>wanxiang.prism.bin</code> 等编译产物。</p>
+      <h1 id="enable">4. 在 GNOME 中启用并验证输入法</h1>
+      <ol><li>打开“设置”→“键盘”→“输入源”。</li><li>点击“＋”，选择“汉语（中国）”，或直接搜索 Rime。</li><li>添加“中文（Rime）”。</li><li>使用 <code>Super + Space</code> 在英文键盘与 Rime 之间切换。</li></ol>
+      <p>也可以用命令保留美式键盘并添加 Rime：</p>
+      <pre><code>gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'rime')]"
+ibus restart
+ibus engine rime</code></pre>
+      <p>验证当前输入引擎及万象编译结果：</p>
+      <pre><code>ibus engine
+cat ~/.config/ibus/rime/version.txt
+ls ~/.config/ibus/rime/build/wanxiang*</code></pre>
+      <p><code>ibus engine</code> 输出 <code>rime</code> 后，在文本编辑器中切换到 Rime，输入 <code>wanxiangpinyin</code>。能够出现简体中文候选框即表示配置完成。</p>
+      <h1 id="troubleshooting">5. 常见问题与更新</h1>
+      <h2>输入源列表没有 Rime</h2><p>先运行 <code>ibus restart</code>，仍未出现就注销并重新登录桌面会话。确认 <code>ibus-rime</code> 已安装后再尝试添加输入源。</p>
+      <h2>能切换 Rime，但没有万象方案</h2><p>检查 <code>default.custom.yaml</code> 的 YAML 缩进和方案名是否为 <code>wanxiang</code>，再重新运行 <code>rime_deployer --build</code>。同时确认方案文件解压在用户目录根部，而不是多嵌套了一层目录。</p>
+      <h2>部署报 Lua 错误或候选效果异常</h2><p>确认 <code>librime-plugin-lua</code> 已安装，并检查语法模型位于 <code>~/.config/ibus/rime/</code> 根目录而非 <code>build/</code> 目录。之后重启 IBus 并重新部署。</p>
+      <h2>更新万象拼音</h2><p>先备份 Rime 用户目录，下载新版 Base 包和语法模型后覆盖方案文件，保留个人数据文件，最后重新执行部署并重启 IBus：</p>
+      <pre><code>cp -a ~/.config/ibus/rime ~/.config/ibus/rime.backup
+rime_deployer --build ~/.config/ibus/rime /usr/share/rime-data ~/.config/ibus/rime/build
+ibus restart</code></pre>
+    </section>
+    <nav class="doc-nav"><a class="prev" href="/docs/install-ubuntu-24-04-lts">‹ 安装 Ubuntu 24.04 LTS</a><a class="next" href="/docs/ai-collaboration-balance-technical-growth">如何与 AI 协作而不让技术力下降 ›</a></nav>
+    <div class="read-count">阅读 0 次</div>
+  </article>
+</main>
+<footer class="footer" id="contact"><div class="footer-inner"><h4>保持联系</h4><table class="contact-table"><thead><tr><th>开源项目</th><th>媒体</th><th>交流群</th></tr></thead><tbody><tr><td><ul><li><a href="https://github.com/LJW0401" target="_blank" rel="noopener noreferrer">GitHub ›</a></li><li><a href="https://gitee.com/Ljw0401" target="_blank" rel="noopener noreferrer">Gitee ›</a></li></ul></td><td><ul><li><a href="https://space.bilibili.com/366882115" target="_blank" rel="noopener noreferrer">B站 ›</a></li><li>抖音</li><li><a href="https://www.xiaohongshu.com/user/profile/62fcfd240000000012000e55" target="_blank" rel="noopener noreferrer">小红书 ›</a></li></ul></td><td><ul><li>QQ：772436864</li></ul></td></tr></tbody></table><div class="copyright">© 2026 Penguin. Designed with care.</div></div></footer>
+</body>
+</html>
