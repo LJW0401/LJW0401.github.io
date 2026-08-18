@@ -53,15 +53,6 @@ git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
   zsh-syntax-highlighting
 )</code></pre>
       <p><code>zsh-syntax-highlighting</code> 应放在插件列表最后。保存后执行 <code>source ~/.zshrc</code>；灰色文字会给出历史命令建议，按 <code>→</code> 或 <code>End</code> 可接受建议。</p>
-      <h2>2.4. 可选：ROS 2 命令行补全</h2>
-      <p>只有已安装 ROS 2 时，才在 <code>~/.zshrc</code> 末尾添加对应发行版的环境脚本。例如 Humble：</p>
-      <pre><code>alias sz='source ~/.zshrc'
-alias ss='source install/setup.zsh'
-source /opt/ros/humble/setup.zsh
-setopt no_nomatch
-eval "$(register-python-argcomplete3 ros2)"
-eval "$(register-python-argcomplete3 colcon)"</code></pre>
-      <p>如果你的 ROS 2 发行版不是 Humble，请把路径中的 <code>humble</code> 改成实际名称；没有安装 ROS 2 时不要加入这段配置。</p>
       <h1 id="rime">3. 安装 Rime 与万象拼音</h1>
       <h2>3.1. 安装 IBus Rime 和 Lua 支持</h2>
       <p>万象拼音部分功能依赖 Lua。安装 IBus Rime、部署工具和 Lua 插件：</p>

@@ -99,26 +99,6 @@ source ~/.zshrc
 
 现在输入一段历史命令时，灰色文字会给出建议；按 `→` 或 `End` 接受建议。有效命令会显示语法颜色。
 
-## 2.4. 可选：ROS 2 命令行补全
-
-只有已安装 ROS 2 时，才在 `~/.zshrc` 末尾添加对应发行版的环境脚本。例如 Humble：
-
-```zsh
-# 常用快捷命令
-alias sz='source ~/.zshrc'
-alias ss='source install/setup.zsh'
-
-# ROS 2 Humble
-source /opt/ros/humble/setup.zsh
-
-# 允许命令参数中未匹配的 * 原样传递
-setopt no_nomatch
-eval "$(register-python-argcomplete3 ros2)"
-eval "$(register-python-argcomplete3 colcon)"
-```
-
-如果你的 ROS 2 发行版不是 Humble，请把路径中的 `humble` 改成实际名称；没有安装 ROS 2 时不要加入这段配置，以免每次启动终端都报错。
-
 # 3. 安装 Rime 与万象拼音
 
 ## 3.1. 安装 IBus Rime 和 Lua 支持
