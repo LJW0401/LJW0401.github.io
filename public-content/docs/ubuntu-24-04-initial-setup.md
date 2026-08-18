@@ -1,5 +1,5 @@
 ---
-title: 全新 Ubuntu 24.04 配置指南：Zsh、Oh My Zsh 与万象拼音
+title: 从零开始 Ubuntu 24
 slug: ubuntu-24-04-initial-setup
 tags: [Ubuntu, Zsh, Oh My Zsh, Rime, 输入法]
 category: Linux
