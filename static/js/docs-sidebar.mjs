@@ -1,17 +1,5 @@
 const CATEGORY_ORDER = ['AI协作', 'Linux', '嵌入式', '工程笔记', '读后感', '随笔'];
 
-const CATEGORY_BY_SLUG = {
-  'ai-collaboration-balance-technical-growth': 'AI协作',
-  'ai-assisted-entry-new-technical-domain': 'AI协作',
-  'ubuntu-24-04-initial-setup': 'Linux',
-  'install-ubuntu-24-04-lts': 'Linux',
-  'wheel-leg-tune-summary': '嵌入式',
-  'blog-server-from-scratch': '工程笔记',
-  'simple-made-easy': '读后感',
-  'developer-tools': '随笔',
-  'why-keep-writing': '随笔',
-};
-
 const VIEW_LABELS = {
   list: '全部',
   category: '目录',
@@ -52,14 +40,16 @@ export function resolveDocsState(search, docs) {
 export function buildCategoryGroups(docs) {
   const grouped = new Map();
   for (const doc of docs) {
-    const category = CATEGORY_BY_SLUG[doc.slug];
-    if (!category) continue;
+    const category = doc.category || '未分类';
     if (!grouped.has(category)) grouped.set(category, []);
     grouped.get(category).push(doc);
   }
 
-  return CATEGORY_ORDER
-    .filter((name) => grouped.has(name))
+  const categories = [
+    ...CATEGORY_ORDER.filter((name) => grouped.has(name)),
+    ...grouped.keys().filter((name) => !CATEGORY_ORDER.includes(name)),
+  ];
+  return categories
     .map((name) => ({ name, docs: grouped.get(name) }));
 }
 
@@ -102,7 +92,7 @@ function renderCategoryView(docs) {
   </div>`;
 }
 
-function tagCounts(docs) {
+export function buildTagCounts(docs) {
   const counts = new Map();
   for (const doc of docs) {
     for (const tag of doc.tags) counts.set(tag, (counts.get(tag) || 0) + 1);
@@ -110,8 +100,17 @@ function tagCounts(docs) {
   return counts;
 }
 
+export function buildSidebarCounts(docs) {
+  return {
+    docs: docs.length,
+    categories: buildCategoryGroups(docs).length,
+    tags: buildTagCounts(docs).size,
+    archives: buildArchiveGroups(docs).length,
+  };
+}
+
 function renderTagCatalog(allDocs, selectedTag, tagOrder) {
-  const counts = tagCounts(allDocs);
+  const counts = buildTagCounts(allDocs);
   const tags = [...tagOrder, ...counts.keys()].filter((tag, index, list) => (
     counts.has(tag) && list.indexOf(tag) === index
   ));
@@ -156,10 +155,45 @@ function readDocs(document) {
       slug: href.split('/').filter(Boolean).at(-1),
       title: row.querySelector('.title')?.textContent.trim() || '',
       date: metaParts.find((text) => /^\d{4}-\d{2}-\d{2}$/.test(text)) || '',
+      category: row.dataset.category || '未分类',
       tags: [...row.querySelectorAll('.tag-mini')].map((tag) => tag.textContent.trim()),
       html: row.outerHTML,
     };
   });
+}
+
+function renderSidebarData(document, docs, tagOrder) {
+  const totals = buildSidebarCounts(docs);
+  const navCounts = {
+    '/docs': totals.docs,
+    '/docs?view=category': totals.categories,
+    '/docs?view=tag': totals.tags,
+    '/docs?view=archive': totals.archives,
+  };
+  for (const link of document.querySelectorAll('.side-nav a')) {
+    const count = link.querySelector('.count');
+    if (count && Object.hasOwn(navCounts, link.getAttribute('href'))) {
+      count.textContent = navCounts[link.getAttribute('href')];
+    }
+  }
+
+  const counts = buildTagCounts(docs);
+  const tags = [...tagOrder, ...counts.keys()].filter((tag, index, list) => (
+    counts.has(tag) && list.indexOf(tag) === index
+  ));
+  const tagList = document.querySelector('.tag-list');
+  if (tagList) {
+    tagList.innerHTML = tags.map((tag) => `
+      <a class="tag" href="/docs?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}<span class="num">${counts.get(tag)}</span></a>`).join('');
+  }
+
+  const archiveList = document.querySelector('.archive-list');
+  if (archiveList) {
+    archiveList.innerHTML = buildArchiveGroups(docs).map((year) => {
+      const count = year.months.reduce((total, month) => total + month.docs.length, 0);
+      return `<li><a href="?year=${encodeURIComponent(year.year)}">${escapeHtml(year.year)}<span class="ar-count">${count}</span></a></li>`;
+    }).join('');
+  }
 }
 
 function setSidebarState(document, params, view) {
@@ -183,7 +217,7 @@ function setSidebarState(document, params, view) {
 export function initDocsSidebar(document, location) {
   const allDocs = readDocs(document);
   const toolbar = document.querySelector('.shell > .main > .toolbar');
-  if (!toolbar || allDocs.length === 0) return;
+  if (!toolbar) return;
 
   const contentRoot = document.createElement('div');
   contentRoot.id = 'docs-content';
@@ -200,6 +234,7 @@ export function initDocsSidebar(document, location) {
   const tagOrder = [...document.querySelectorAll('.tag-list .tag')]
     .map((link) => new URL(link.href).searchParams.get('tag'))
     .filter(Boolean);
+  renderSidebarData(document, allDocs, tagOrder);
 
   let body;
   if (state.view === 'category') body = renderCategoryView(state.docs);
