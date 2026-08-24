@@ -124,8 +124,19 @@ export function toggleTagSearch(search, tag) {
   return query ? `?${query}` : '';
 }
 
+export function isDocsIndexUrl(href, currentHref) {
+  try {
+    const currentUrl = new URL(currentHref);
+    const targetUrl = new URL(href, currentUrl);
+    return targetUrl.origin === currentUrl.origin
+      && (targetUrl.pathname === '/docs' || targetUrl.pathname === '/docs/');
+  } catch {
+    return false;
+  }
+}
+
 function tagHref(search, tag) {
-  return `/docs${toggleTagSearch(search, tag)}`;
+  return `/docs/${toggleTagSearch(search, tag)}`;
 }
 
 function renderTagCatalog(allDocs, selectedTags, tagOrder, search) {
@@ -187,10 +198,10 @@ function readDocs(document) {
 function renderSidebarData(document, docs, tagOrder, search) {
   const totals = buildSidebarCounts(docs);
   const navCounts = {
-    '/docs': totals.docs,
-    '/docs?view=category': totals.categories,
-    '/docs?view=tag': totals.tags,
-    '/docs?view=archive': totals.archives,
+    '/docs/': totals.docs,
+    '/docs/?view=category': totals.categories,
+    '/docs/?view=tag': totals.tags,
+    '/docs/?view=archive': totals.archives,
   };
   for (const link of document.querySelectorAll('.side-nav a')) {
     const count = link.querySelector('.count');
@@ -213,14 +224,14 @@ function renderSidebarData(document, docs, tagOrder, search) {
   if (archiveList) {
     archiveList.innerHTML = buildArchiveGroups(docs).map((year) => {
       const count = year.months.reduce((total, month) => total + month.docs.length, 0);
-      return `<li><a href="?year=${encodeURIComponent(year.year)}">${escapeHtml(year.year)}<span class="ar-count">${count}</span></a></li>`;
+      return `<li><a href="/docs/?year=${encodeURIComponent(year.year)}">${escapeHtml(year.year)}<span class="ar-count">${count}</span></a></li>`;
     }).join('');
   }
 }
 
 function setSidebarState(document, params, view) {
   for (const link of document.querySelectorAll('.side-nav a')) link.classList.remove('active');
-  const viewHref = view === 'list' ? '/docs' : `/docs?view=${view}`;
+  const viewHref = view === 'list' ? '/docs/' : `/docs/?view=${view}`;
   document.querySelector(`.side-nav a[href="${viewHref}"]`)?.classList.add('active');
 
   const selectedTags = params.getAll('tag');
@@ -250,28 +261,53 @@ export function initDocsSidebar(document, location) {
     contentNode = nextNode;
   }
 
-  const params = new URLSearchParams(location.search);
-  const state = resolveDocsState(location.search, allDocs);
   const tagOrder = [...document.querySelectorAll('.tag-list .tag')]
     .map((link) => new URL(link.href).searchParams.get('tag'))
     .filter(Boolean);
-  renderSidebarData(document, allDocs, tagOrder, location.search);
 
-  let body;
-  if (state.view === 'category') body = renderCategoryView(state.docs);
-  else if (state.view === 'archive') body = renderArchiveView(state.docs);
-  else if (state.view === 'tag') {
-    const selectedTags = params.getAll('tag');
-    body = renderTagCatalog(allDocs, selectedTags, tagOrder, location.search);
-    if (selectedTags.length > 0) body += renderDocList(state.docs);
-  } else body = renderDocList(state.docs);
+  const render = (search) => {
+    const params = new URLSearchParams(search);
+    const state = resolveDocsState(search, allDocs);
+    renderSidebarData(document, allDocs, tagOrder, search);
 
-  contentRoot.innerHTML = `
-    <div class="toolbar">
-      <div class="left">共 <strong>${state.docs.length}</strong> 篇 · 当前：<strong>${escapeHtml(state.label)}</strong></div>
-    </div>
-    ${body}`;
-  setSidebarState(document, params, state.view);
+    let body;
+    if (state.view === 'category') body = renderCategoryView(state.docs);
+    else if (state.view === 'archive') body = renderArchiveView(state.docs);
+    else if (state.view === 'tag') {
+      const selectedTags = params.getAll('tag');
+      body = renderTagCatalog(allDocs, selectedTags, tagOrder, search);
+      if (selectedTags.length > 0) body += renderDocList(state.docs);
+    } else body = renderDocList(state.docs);
+
+    contentRoot.innerHTML = `
+      <div class="toolbar">
+        <div class="left">共 <strong>${state.docs.length}</strong> 篇 · 当前：<strong>${escapeHtml(state.label)}</strong></div>
+      </div>
+      ${body}`;
+    setSidebarState(document, params, state.view);
+  };
+
+  render(location.search);
+
+  const view = document.defaultView;
+  if (view) {
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0
+        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest?.('a[href]');
+      if (!link || link.hasAttribute('download')
+        || (link.target && link.target !== '_self')
+        || !isDocsIndexUrl(link.href, location.href)) return;
+
+      event.preventDefault();
+      const targetUrl = new URL(link.href, location.href);
+      view.history.pushState(null, '', targetUrl);
+      render(targetUrl.search);
+    });
+    view.addEventListener('popstate', () => render(view.location.search));
+  }
+
+  return { render };
 }
 
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {

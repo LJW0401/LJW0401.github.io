@@ -7,6 +7,7 @@ import {
   buildCategoryGroups,
   buildSidebarCounts,
   buildTagCounts,
+  isDocsIndexUrl,
   resolveDocsState,
   toggleTagSearch,
 } from '../static/js/docs-sidebar.mjs';
@@ -74,6 +75,7 @@ test('目录和归档按线上页面的折叠层级分组', () => {
 test('文档首页加载侧边栏交互模块', async () => {
   const html = await readFile(new URL('../docs/index.html', import.meta.url), 'utf8');
   assert.match(html, /<script type="module" src="\/static\/js\/docs-sidebar\.mjs"><\/script>/);
+  assert.doesNotMatch(html, /href="\/docs\?/);
 });
 
 test('侧边栏总数和每个标签数量由实际文章计算', () => {
@@ -117,4 +119,12 @@ test('标签切换保留当前视图并支持再次点击取消', () => {
   const removed = new URLSearchParams(toggleTagSearch(added.toString(), 'Ubuntu'));
   assert.deepEqual(removed.getAll('tag'), ['Zsh']);
   assert.equal(removed.get('view'), 'tag');
+});
+
+test('只有同源文档首页链接由无刷新导航接管', () => {
+  const current = 'https://example.com/docs/';
+  assert.equal(isDocsIndexUrl('/docs/?view=tag', current), true);
+  assert.equal(isDocsIndexUrl('/docs?tag=Ubuntu', current), true);
+  assert.equal(isDocsIndexUrl('/docs/simple-made-easy', current), false);
+  assert.equal(isDocsIndexUrl('https://other.example/docs/?view=tag', current), false);
 });
