@@ -22,16 +22,16 @@ export function resolveDocsState(search, docs) {
   const view = ['category', 'tag', 'archive'].includes(requestedView)
     ? requestedView
     : 'list';
-  const tag = params.get('tag');
+  const tags = [...new Set(params.getAll('tag').filter(Boolean))];
   const year = params.get('year');
   const filteredDocs = docs.filter((doc) => {
-    const tagMatches = !tag || doc.tags.includes(tag);
+    const tagMatches = tags.every((tag) => doc.tags.includes(tag));
     const yearMatches = !year || doc.date.startsWith(`${year}-`);
     return tagMatches && yearMatches;
   });
 
   let label = VIEW_LABELS[view];
-  if (tag) label = `标签：${tag}`;
+  if (tags.length > 0) label = `标签：${tags.join(' + ')}`;
   else if (year) label = `年份：${year}`;
 
   return { view, label, docs: filteredDocs };
@@ -109,16 +109,35 @@ export function buildSidebarCounts(docs) {
   };
 }
 
-function renderTagCatalog(allDocs, selectedTag, tagOrder) {
+export function toggleTagSearch(search, tag) {
+  const params = new URLSearchParams(search);
+  const selectedTags = [...new Set(params.getAll('tag').filter(Boolean))];
+  const nextTags = selectedTags.includes(tag)
+    ? selectedTags.filter((selectedTag) => selectedTag !== tag)
+    : [...selectedTags, tag];
+  const nextParams = new URLSearchParams();
+  for (const selectedTag of nextTags) nextParams.append('tag', selectedTag);
+  for (const [key, value] of params) {
+    if (key !== 'tag') nextParams.append(key, value);
+  }
+  const query = nextParams.toString();
+  return query ? `?${query}` : '';
+}
+
+function tagHref(search, tag) {
+  return `/docs${toggleTagSearch(search, tag)}`;
+}
+
+function renderTagCatalog(allDocs, selectedTags, tagOrder, search) {
   const counts = buildTagCounts(allDocs);
   const tags = [...tagOrder, ...counts.keys()].filter((tag, index, list) => (
     counts.has(tag) && list.indexOf(tag) === index
   ));
   return `<div class="tag-catalog">${tags.map((tag) => {
-    const active = tag === selectedTag;
-    const href = active ? '/docs?view=tag' : `/docs?tag=${encodeURIComponent(tag)}&view=tag`;
+    const active = selectedTags.includes(tag);
+    const href = tagHref(search, tag);
     return `
-    <a class="tag-card${active ? ' active' : ''}" href="${href}">
+    <a class="tag-card${active ? ' active' : ''}" href="${escapeHtml(href)}">
       <span class="tag-card-name">${escapeHtml(tag)}</span>
       <span class="tag-card-count">${counts.get(tag)} 篇</span>
     </a>`;
@@ -144,7 +163,10 @@ function renderArchiveView(docs) {
 }
 
 function renderDocList(docs) {
-  return `<div class="doc-list">${docs.map((doc) => doc.html).join('')}</div>`;
+  const rows = docs.length > 0
+    ? docs.map((doc) => doc.html).join('')
+    : '<div class="doc-row doc-row-empty">暂无内容</div>';
+  return `<div class="doc-list">${rows}</div>`;
 }
 
 function readDocs(document) {
@@ -162,7 +184,7 @@ function readDocs(document) {
   });
 }
 
-function renderSidebarData(document, docs, tagOrder) {
+function renderSidebarData(document, docs, tagOrder, search) {
   const totals = buildSidebarCounts(docs);
   const navCounts = {
     '/docs': totals.docs,
@@ -184,7 +206,7 @@ function renderSidebarData(document, docs, tagOrder) {
   const tagList = document.querySelector('.tag-list');
   if (tagList) {
     tagList.innerHTML = tags.map((tag) => `
-      <a class="tag" href="/docs?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}<span class="num">${counts.get(tag)}</span></a>`).join('');
+      <a class="tag" data-tag="${escapeHtml(tag)}" href="${escapeHtml(tagHref(search, tag))}">${escapeHtml(tag)}<span class="num">${counts.get(tag)}</span></a>`).join('');
   }
 
   const archiveList = document.querySelector('.archive-list');
@@ -201,10 +223,9 @@ function setSidebarState(document, params, view) {
   const viewHref = view === 'list' ? '/docs' : `/docs?view=${view}`;
   document.querySelector(`.side-nav a[href="${viewHref}"]`)?.classList.add('active');
 
-  const selectedTag = params.get('tag');
+  const selectedTags = params.getAll('tag');
   for (const link of document.querySelectorAll('.tag-list .tag')) {
-    const tag = new URL(link.href).searchParams.get('tag');
-    link.classList.toggle('active', tag === selectedTag);
+    link.classList.toggle('active', selectedTags.includes(link.dataset.tag));
   }
 
   const selectedYear = params.get('year');
@@ -234,14 +255,15 @@ export function initDocsSidebar(document, location) {
   const tagOrder = [...document.querySelectorAll('.tag-list .tag')]
     .map((link) => new URL(link.href).searchParams.get('tag'))
     .filter(Boolean);
-  renderSidebarData(document, allDocs, tagOrder);
+  renderSidebarData(document, allDocs, tagOrder, location.search);
 
   let body;
   if (state.view === 'category') body = renderCategoryView(state.docs);
   else if (state.view === 'archive') body = renderArchiveView(state.docs);
   else if (state.view === 'tag') {
-    body = renderTagCatalog(allDocs, params.get('tag'), tagOrder);
-    if (params.has('tag')) body += renderDocList(state.docs);
+    const selectedTags = params.getAll('tag');
+    body = renderTagCatalog(allDocs, selectedTags, tagOrder, location.search);
+    if (selectedTags.length > 0) body += renderDocList(state.docs);
   } else body = renderDocList(state.docs);
 
   contentRoot.innerHTML = `

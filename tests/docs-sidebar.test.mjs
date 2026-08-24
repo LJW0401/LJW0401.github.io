@@ -8,6 +8,7 @@ import {
   buildSidebarCounts,
   buildTagCounts,
   resolveDocsState,
+  toggleTagSearch,
 } from '../static/js/docs-sidebar.mjs';
 
 const docs = [
@@ -99,4 +100,21 @@ test('边界：空文章列表计数为零，缺少分类时进入未分类', ()
     archives: 0,
   });
   assert.equal(buildCategoryGroups([{ ...docs[0], category: '' }])[0].name, '未分类');
+});
+
+test('多个标签使用交集筛选并完整显示已选条件', () => {
+  const state = resolveDocsState('?tag=Ubuntu&tag=Zsh&view=tag', docs);
+  assert.equal(state.view, 'tag');
+  assert.equal(state.label, '标签：Ubuntu + Zsh');
+  assert.deepEqual(state.docs.map((doc) => doc.slug), ['ubuntu-24-04-initial-setup']);
+});
+
+test('标签切换保留当前视图并支持再次点击取消', () => {
+  const added = new URLSearchParams(toggleTagSearch('?tag=Ubuntu&view=tag', 'Zsh'));
+  assert.deepEqual(added.getAll('tag'), ['Ubuntu', 'Zsh']);
+  assert.equal(added.get('view'), 'tag');
+
+  const removed = new URLSearchParams(toggleTagSearch(added.toString(), 'Ubuntu'));
+  assert.deepEqual(removed.getAll('tag'), ['Zsh']);
+  assert.equal(removed.get('view'), 'tag');
 });
