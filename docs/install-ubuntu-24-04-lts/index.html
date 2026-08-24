@@ -49,9 +49,9 @@
     <div class="kicker">Linux</div>
     <h1>安装 Ubuntu 24.04 LTS</h1>
     <div class="meta">
-      <span>2026-07-10 更新</span>
+      <span>2026-08-24 更新</span>
       <span class="dot-sep">·</span>
-      <span>2 分钟阅读</span>
+      <span>6 分钟阅读</span>
       <span class="tag-mini">Ubuntu</span><span class="tag-mini">系统</span>
     </div>
   </header>
@@ -89,16 +89,78 @@
 <p>进入 BIOS</p>
 </li>
 <li>
-<p>寻找 <code>Security Boot</code> 选项，设置为 <strong><code>False</code></strong></p>
+<p>寻找 <code>Secure Boot</code> 选项，设置为 <strong><code>Disabled</code></strong></p>
 </li>
 </ol>
 <blockquote>
-<p>非常重要！若保持默认为 True ，将导致<strong>无法安装 CUDA 和使用外接显示屏</strong></p>
+<p>如果后续需要安装 NVIDIA 驱动、CUDA，建议先关闭 Secure Boot，避免驱动模块因签名问题无法加载。</p>
 </blockquote>
 <ol start="5">
 <li>在 BIOS 启动启动盘中的系统</li>
 </ol>
 <h2 id="32-">3.2. 安装系统</h2>
+<p>启动安装盘后，安装程序会依次引导完成基础设置。</p>
+<ol>
+<li>
+<p>选择安装界面语言。本文截图使用 English，选择其他语言不会影响后续安装步骤。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/01-choose-language.png" alt="选择 Ubuntu 安装语言" /></p>
+</li>
+<li>
+<p>按需配置视觉、听觉、输入和缩放等辅助功能；没有特殊需求可以直接点击 <strong>Next</strong>。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/02-accessibility.png" alt="配置 Ubuntu 辅助功能" /></p>
+</li>
+<li>
+<p>选择键盘布局。常用美式键盘可选择 <strong>English (US)</strong>，并在输入框中测试按键。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/03-keyboard-layout.png" alt="选择键盘布局" /></p>
+</li>
+<li>
+<p>选择网络连接。联网可以在安装过程中获取更新和硬件支持；暂时无法联网也可以选择离线安装。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/04-network-connection.png" alt="选择安装时的网络连接" /></p>
+</li>
+<li>
+<p>选择 <strong>Install Ubuntu</strong>，然后选择 <strong>Interactive installation</strong>，使用图形界面逐步完成安装。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/05-install-ubuntu.png" alt="选择安装 Ubuntu" /></p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/06-interactive-installation.png" alt="选择交互式安装" /></p>
+</li>
+<li>
+<p>选择预装应用。<strong>Default selection</strong> 只安装基础工具；需要办公软件和更多常用工具时可选择 <strong>Extended selection</strong>。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/07-app-selection.png" alt="选择预装应用范围" /></p>
+</li>
+<li>
+<p>如果电脑使用 NVIDIA 显卡或需要额外的 Wi-Fi 驱动，建议联网并勾选安装第三方专有软件。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/08-proprietary-software.png" alt="选择安装第三方驱动和媒体支持" /></p>
+</li>
+</ol>
+<h2 id="33-">3.3. 手动分区</h2>
+<p>为了使用之前在 Windows 中预留的空闲空间，选择 <strong>Manual installation</strong>。</p>
+<blockquote>
+<p>分区操作有丢失数据的风险。请根据磁盘容量和现有 Windows 分区确认目标磁盘，切勿格式化 Windows、BitLocker 或恢复分区。下面的分区编号和容量只是示例，以你的电脑实际情况为准。</p>
+</blockquote>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/09-manual-installation.png" alt="选择手动分区" /></p>
+<p>在分区列表中找到之前预留的 <strong>Free space</strong>。截图中的目标磁盘是 <code>nvme0n1</code>，可用空间约为 214.75 GB。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/10-select-free-space.png" alt="选择预留的空闲空间" /></p>
+<p>可以参考下面的方案创建分区：</p>
+<table>
+<thead>
+<tr><th>挂载点</th><th>建议大小</th><th>文件系统</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/boot/efi</code></td><td>复用现有 EFI 分区</td><td>VFAT</td><td>GPT 双系统通常复用 Windows Boot Manager 所在的 EFI 分区，不要格式化</td></tr>
+<tr><td><code>/boot</code></td><td>500 MB 左右</td><td>Ext4</td><td>存放内核和启动文件</td></tr>
+<tr><td><code>swap</code></td><td>视内存和休眠需求而定</td><td>Swap</td><td>示例分配 16 GB</td></tr>
+<tr><td><code>/</code></td><td>剩余空间</td><td>Ext4</td><td>Ubuntu 系统和用户文件</td></tr>
+</tbody>
+</table>
+<p>完成后逐项核对挂载点、容量、格式化选项和底部的引导加载器目标磁盘。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/11-partition-layout.png" alt="核对 Ubuntu 手动分区方案" /></p>
+<p>选择根分区 <code>/</code> 后再次确认它位于刚才创建的 Linux 分区中，然后点击 <strong>Next</strong>。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/12-confirm-root-partition.png" alt="确认 Ubuntu 根分区" /></p>
+<h2 id="34-">3.4. 创建账户并选择时区</h2>
+<p>填写姓名、计算机名、用户名和密码。截图中的内容仅为示例，请设置强密码并妥善保存。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/13-create-account.png" alt="创建 Ubuntu 用户账户" /></p>
+<p>选择所在地和时区，中国大陆通常使用 <strong>Asia/Shanghai</strong>。</p>
+<p><img src="/images/docs/install-ubuntu-24-04-lts/14-select-timezone.png" alt="选择 Asia Shanghai 时区" /></p>
+<p>最后检查安装摘要，确认无误后开始安装。安装完成并提示重启时，拔出安装 U 盘，再按提示进入新系统。</p>
 
   </section>
 

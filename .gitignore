@@ -1,2 +1,5 @@
 # 本地导出备份包含服务端数据，禁止提交到公开仓库
 blog-server-export-*.tar.gz
+
+# 本地截图素材包仅用于整理图片，禁止提交压缩包
+/Screenshots.zip
